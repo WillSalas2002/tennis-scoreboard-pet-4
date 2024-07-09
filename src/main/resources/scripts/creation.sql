@@ -1,0 +1,16 @@
+CREATE TABLE Players
+(
+    id   INTEGER PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE Matches
+(
+    id      INTEGER PRIMARY KEY AUTO_INCREMENT,
+    player1 INTEGER NOT NULL,
+    player2 INTEGER NOT NULL,
+    winner  INTEGER NOT NULL,
+    FOREIGN KEY (player1) REFERENCES Players (id),
+    FOREIGN KEY (player2) REFERENCES Players (id),
+    FOREIGN KEY (winner) REFERENCES Players (id)
+);
