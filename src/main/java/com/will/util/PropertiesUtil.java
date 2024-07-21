@@ -1,9 +1,12 @@
 package com.will.util;
 
+import lombok.experimental.UtilityClass;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+@UtilityClass
 public class PropertiesUtil {
     private final static Properties PROPERTIES = new Properties();
 

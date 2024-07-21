@@ -1,5 +1,7 @@
 package com.will.util;
 
+import lombok.experimental.UtilityClass;
+
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,6 +9,7 @@ import java.sql.SQLException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+@UtilityClass
 public class ConnectionManager {
     private static final String USER_KEY = "db.username";
     private static final String PASSWORD_KEY = "db.password";
@@ -15,8 +18,6 @@ public class ConnectionManager {
     private static final int DEFAULT_POOL_SIZE = 10;
     private static final String DRIVER_KEY = "db.driver";
     private static BlockingQueue<Connection> pool;
-
-    private ConnectionManager(){}
 
     static {
         initializeConnectionPool();
