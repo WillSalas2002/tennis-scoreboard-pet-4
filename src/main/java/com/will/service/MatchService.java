@@ -22,6 +22,15 @@ public class MatchService {
         return convertToMatchDTO(matches);
     }
 
+    public int getPageCount() {
+
+        int totalRowCount = matchRepository.getTotalRowCount();
+        int division = totalRowCount / RECORDS_PER_PAGE;
+
+        return totalRowCount % RECORDS_PER_PAGE == 0 ?
+                division : division + 1;
+    }
+
     private List<MatchDTO> convertToMatchDTO(List<Match> matches) {
         List<MatchDTO> matchDTOs = new ArrayList<>();
         for (int i = 0; i < matches.size(); i++) {
@@ -35,6 +44,4 @@ public class MatchService {
         }
         return matchDTOs;
     }
-
-
 }

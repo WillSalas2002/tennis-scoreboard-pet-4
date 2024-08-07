@@ -37,6 +37,8 @@ public class MatchRepository {
             LIMIT %d OFFSET %d;
             """;
 
+    private static final String QUERY_PAGE_COUNT = "SELECT COUNT(*) AS total FROM tennis.match";
+
     public List<Match> findAll(int limit, int offset, String filter) {
 
         String sql;
@@ -56,6 +58,20 @@ public class MatchRepository {
             }
 
             return matches;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getTotalRowCount() {
+        try (Connection connection = ConnectionManager.get();
+             PreparedStatement statement = connection.prepareStatement(QUERY_PAGE_COUNT)) {
+            ResultSet resultSet = statement.executeQuery();
+            int totalCount = 0;
+            if (resultSet.next()) {
+                totalCount = resultSet.getInt("total");
+            }
+            return totalCount;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

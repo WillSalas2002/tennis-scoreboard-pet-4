@@ -22,7 +22,11 @@ public class MatchesServlet extends HttpServlet {
         String filter = req.getParameter("filterByName");
 
         List<MatchDTO> matches = service.findAll(pageStr, filter);
+        int pageCount = service.getPageCount();
+
         req.setAttribute("matches", matches);
+        req.setAttribute("pageCount", pageCount);
+
         req.getRequestDispatcher(PathFinder.find("matches")).forward(req, resp);
     }
 }
