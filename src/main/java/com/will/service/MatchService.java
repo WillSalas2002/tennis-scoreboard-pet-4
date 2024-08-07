@@ -4,8 +4,8 @@ import com.will.dto.MatchDTO;
 import com.will.model.Match;
 import com.will.repository.MatchRepository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MatchService {
     private final int RECORDS_PER_PAGE = 10;
@@ -19,7 +19,10 @@ public class MatchService {
             page = Integer.parseInt(pageStr);
         }
         List<Match> matches = matchRepository.findAll(RECORDS_PER_PAGE, (page - 1) * RECORDS_PER_PAGE, filter);
-        return convertToMatchDTO(matches);
+
+        return matches.stream()
+                .map(this::convertToMatchDTO)
+                .collect(Collectors.toList());
     }
 
     public int getPageCount() {
@@ -31,17 +34,12 @@ public class MatchService {
                 division : division + 1;
     }
 
-    private List<MatchDTO> convertToMatchDTO(List<Match> matches) {
-        List<MatchDTO> matchDTOs = new ArrayList<>();
-        for (int i = 0; i < matches.size(); i++) {
-            Match match = matches.get(i);
-            matchDTOs.add(new MatchDTO(
-                    i + 1,
-                    match.getPlayer1().getName(),
-                    match.getPlayer2().getName(),
-                    match.getWinner().getName()
-            ));
-        }
-        return matchDTOs;
+    private MatchDTO convertToMatchDTO(Match match) {
+        return new MatchDTO(
+                match.getId(),
+                match.getPlayer1().getName(),
+                match.getPlayer2().getName(),
+                match.getWinner().getName()
+        );
     }
 }
