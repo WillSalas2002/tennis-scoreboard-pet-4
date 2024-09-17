@@ -1,0 +1,41 @@
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-image: url("../tennis.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+header {
+    height: 55px;
+    background-color: lightblue;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.button {
+    background-color: #008CBA;
+    color: white;
+    margin: 45px;
+    padding: 12px 28px;
+    border-radius: 8px;
+}
+
+footer {
+    height: 55px;
+    background-color: lightblue;
+}
