@@ -1,9 +1,10 @@
 package com.will.controller;
 
-import com.will.entity.MatchScore;
-import com.will.entity.PlayerScore;
+import com.will.dto.MatchScore;
+import com.will.dto.PlayerScore;
+import com.will.model.Player;
+import com.will.service.OngoingMatchesService;
 import com.will.service.PlayerService;
-import com.will.storage.Storage;
 import com.will.util.PathFinder;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -29,12 +30,12 @@ public class NewMatchServlet extends HttpServlet {
         String player1Name = req.getParameter("player1");
         String player2Name = req.getParameter("player2");
 
-        PlayerScore player1 = playerService.findOrSave(player1Name);
-        PlayerScore player2 = playerService.findOrSave(player2Name);
+        Player player1 = playerService.findOrSave(player1Name);
+        Player player2 = playerService.findOrSave(player2Name);
 
         UUID uuid = UUID.randomUUID();
-        MatchScore matchScore = new MatchScore(player1, player2);
-        Storage.addMatch(uuid, matchScore);
+        MatchScore matchScore = new MatchScore(new PlayerScore(player1Name), new PlayerScore(player2Name));
+        OngoingMatchesService.addMatch(uuid, matchScore);
 
         resp.sendRedirect(req.getContextPath() + "/matchScore?uuid=" + uuid);
     }
