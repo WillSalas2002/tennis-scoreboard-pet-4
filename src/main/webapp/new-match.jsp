@@ -14,7 +14,7 @@
     <div class="form-label">
         New Game Form
     </div>
-    <form>
+    <form method="POST" action="${pageContext.request.contextPath}/newMatch">
         <label>
             <div class="input-label">Player 1</div>
             <input type="text" name="player1" placeholder="Enter name..">
