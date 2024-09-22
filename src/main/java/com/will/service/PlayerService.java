@@ -1,6 +1,5 @@
 package com.will.service;
 
-import com.will.entity.PlayerScore;
 import com.will.model.Player;
 import com.will.repository.PlayerRepository;
 
@@ -17,19 +16,8 @@ public class PlayerService {
         return repository.save(new Player(name));
     }
 
-    public PlayerScore findOrSave(String name) {
-        Player player;
-        Optional<Player> playerOptional = findByName(name);
-
-        if (playerOptional.isEmpty()) {
-            player = save(name);
-        } else {
-            player = playerOptional.get();
-        }
-        return convertToPlayerScore(player);
-    }
-
-    private PlayerScore convertToPlayerScore(Player player) {
-        return new PlayerScore(player.getId(), player.getName());
+    public Player findOrSave(String name) {
+        return findByName(name)
+                .orElseGet(() -> save(name));
     }
 }
