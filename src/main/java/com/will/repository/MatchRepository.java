@@ -85,4 +85,8 @@ public class MatchRepository {
                 new Player(resultSet.getString("winner_name"))
         );
     }
+
+    public void save(Match match) {
+
+    }
 }

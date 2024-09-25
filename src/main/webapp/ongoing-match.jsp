@@ -51,12 +51,12 @@
 <!-- Форма и кнопки для фиксирования очков -->
 <div class="button-container">
     <form id="player1-form" method="POST" action="${pageContext.request.contextPath}/matchScore?uuid=${requestScope.uuid}">
-        <input type="hidden" name="scorerName" value="${requestScope.matchScore.player1.name}">
+        <input type="hidden" name="scorerId" value="${requestScope.matchScore.player1.id}">
         <button type="submit">Игрок 1 выиграл текущее очко</button>
     </form>
 
     <form id="player2-form" method="POST" action="${pageContext.request.contextPath}/matchScore?uuid=${requestScope.uuid}">
-        <input type="hidden" name="scorerName" value="${requestScope.matchScore.player2.name}">
+        <input type="hidden" name="scorerId" value="${requestScope.matchScore.player2.id}">
         <button type="submit">Игрок 2 выиграл текущее очко</button>
     </form>
 </div>

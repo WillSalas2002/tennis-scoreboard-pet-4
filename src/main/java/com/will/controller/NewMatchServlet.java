@@ -34,7 +34,7 @@ public class NewMatchServlet extends HttpServlet {
         Player player2 = playerService.findOrSave(player2Name);
 
         UUID uuid = UUID.randomUUID();
-        MatchScore matchScore = new MatchScore(new PlayerScore(player1Name), new PlayerScore(player2Name));
+        MatchScore matchScore = new MatchScore(new PlayerScore(player1.getId()), new PlayerScore(player2.getId()));
         OngoingMatchesService.addMatch(uuid, matchScore);
 
         resp.sendRedirect(req.getContextPath() + "/matchScore?uuid=" + uuid);

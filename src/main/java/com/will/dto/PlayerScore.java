@@ -7,13 +7,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PlayerScore {
-    private String name;
+    private Long id;
     private Point point;
     private int setScore;
     private int matchScore;
 
-    public PlayerScore(String name) {
-        this.name = name;
+    public PlayerScore(Long id) {
+        this.id = id;
         this.point = Point.LOVE;
     }
 }

@@ -9,9 +9,9 @@ public class MatchScoreCalculationService {
 
     private boolean isGameFinished;
 
-    public void updateScore(MatchScore match, String scorerName) {
+    public void updateScore(MatchScore match, String scorerIdStr) {
 
-        PlayerScore scorer = Objects.equals(match.getPlayer1().getName(), scorerName)
+        PlayerScore scorer = Objects.equals(match.getPlayer1().getId(), Long.parseLong(scorerIdStr))
                 ? match.getPlayer1() : match.getPlayer2();
 
         PlayerScore opposite = scorer.equals(match.getPlayer2())
@@ -54,6 +54,7 @@ public class MatchScoreCalculationService {
             // TODO: need to play tiebreak;
 
             if (scorer.getMatchScore() == 2) {
+                match.setWinner(scorer);
                 isGameFinished = true;
             }
         }
@@ -68,6 +69,7 @@ public class MatchScoreCalculationService {
             match.refreshSetScores();
 
             if (scorer.getMatchScore() == 2) {
+                match.setWinner(scorer);
                 isGameFinished = true;
             }
         }

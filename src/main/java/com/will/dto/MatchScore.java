@@ -9,6 +9,7 @@ import lombok.Setter;
 public class MatchScore {
     private PlayerScore player1;
     private PlayerScore player2;
+    private PlayerScore winner;
 
     public MatchScore(PlayerScore player1, PlayerScore player2) {
         this.player1 = player1;
