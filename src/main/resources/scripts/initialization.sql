@@ -1,5 +1,5 @@
 
-INSERT INTO Players (name)
+INSERT INTO Player (name)
 VALUES ('Roger Federer'),
        ('Rafael Nadal'),
        ('Novak Djokovic'),
@@ -12,7 +12,7 @@ VALUES ('Roger Federer'),
        ('Nick Kyrgios');
 
 
-INSERT INTO Matches (player1, player2, winner)
+INSERT INTO Match (player1, player2, winner)
 VALUES (1, 2, 1),
        (3, 4, 3),
        (5, 6, 5),

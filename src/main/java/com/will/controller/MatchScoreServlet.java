@@ -1,10 +1,10 @@
 package com.will.controller;
 
-import com.will.dto.MatchScore;
-import com.will.model.Match;
 import com.will.service.FinishedMatchesPersistenceService;
-import com.will.service.MatchScoreCalculationService;
 import com.will.service.OngoingMatchesService;
+import com.will.service.calculation.State;
+import com.will.service.MatchScoreCalculationService;
+import com.will.dto.MatchScoreModel;
 import com.will.util.PathFinder;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @WebServlet("/matchScore")
 public class MatchScoreServlet extends HttpServlet {
@@ -22,28 +23,32 @@ public class MatchScoreServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String uuid = req.getParameter("uuid");
-        MatchScore matchScore = OngoingMatchesService.getMatch(uuid);
+        MatchScoreModel matchScoreModel = OngoingMatchesService.getMatch(uuid);
 
-        req.setAttribute("matchScore", matchScore);
+        req.setAttribute("matchScoreModel", matchScoreModel);
         req.setAttribute("uuid", uuid);
         req.getRequestDispatcher(PathFinder.find("ongoing-match")).forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String uuid = req.getParameter("uuid");
+        String uuidStr = req.getParameter("uuid");
         String scorerIdStr = req.getParameter("scorerId");
-        MatchScore matchScore = OngoingMatchesService.getMatch(uuid);
+        MatchScoreModel matchScoreModel = OngoingMatchesService.getMatch(uuidStr);
 
-        calculationService.updateScore(matchScore, scorerIdStr);
+        State state = calculationService.updateScore(matchScoreModel, Long.valueOf(scorerIdStr));
 
-        if (calculationService.isGameFinished()) {
-            // TODO: persist match to database
-            persistenceService.save(matchScore);
-            resp.sendRedirect(req.getContextPath() + "/home");
+        if (!state.equals(State.ONGOING)) {
+            if (state.equals(State.PLAYER_ONE_WON)) {
+                matchScoreModel.setWinner(matchScoreModel.getPlayer1());
+            } else {
+                matchScoreModel.setWinner(matchScoreModel.getPlayer2());
+            }
+            persistenceService.save(matchScoreModel);
+            OngoingMatchesService.removeMatch(UUID.fromString(uuidStr));
+            resp.sendRedirect(PathFinder.find("home"));
             return;
         }
-
         doGet(req, resp);
     }
 }

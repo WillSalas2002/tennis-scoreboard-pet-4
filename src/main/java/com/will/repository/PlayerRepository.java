@@ -3,18 +3,22 @@ package com.will.repository;
 import com.will.model.Player;
 import com.will.util.ConnectionManager;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Optional;
 
 public class PlayerRepository {
 
-    private final static String FIND_BY_NAME_SQL = "SELECT * FROM tennis.player WHERE name = ?";
-    private final static String SAVE_SQL = "INSERT INTO tennis.player (name) VALUES (?)";
+    private final static String FIND_BY_NAME_SQL = "SELECT * FROM player WHERE name = ?";
+    private final static String SAVE_SQL = "INSERT INTO player (name) VALUES (?)";
 
-    public Optional<Player> findByPlayerName(Player player) {
+    public Optional<Player> findByPlayerName(String name) {
         try (Connection connection = ConnectionManager.get();
              PreparedStatement statement = connection.prepareStatement(FIND_BY_NAME_SQL)) {
-            statement.setString(1, player.getName());
+            statement.setString(1, name);
             ResultSet resultSet = statement.executeQuery();
             Player resultPlayer = null;
             if (resultSet.next()) {

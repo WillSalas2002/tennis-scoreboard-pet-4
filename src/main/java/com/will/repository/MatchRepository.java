@@ -18,10 +18,10 @@ public class MatchRepository {
                    p1.name AS player1_name,
                    p2.name AS player2_name,
                    w.name  AS winner_name
-            FROM tennis.match m
-                     JOIN tennis.player p1 ON m.player1 = p1.id
-                     JOIN tennis.player p2 ON m.player2 = p2.id
-                     JOIN tennis.player w  ON m.winner  = w.id
+            FROM match m
+                     JOIN player p1 ON m.player1 = p1.id
+                     JOIN player p2 ON m.player2 = p2.id
+                     JOIN player w  ON m.winner  = w.id
             LIMIT %d OFFSET %d;
             """;
     private static final String QUERY_WITH_FILTER_AND_PAGINATION = """
@@ -29,15 +29,19 @@ public class MatchRepository {
                    p1.name AS player1_name,
                    p2.name AS player2_name,
                    w.name  AS winner_name
-            FROM tennis.match m
-                     JOIN tennis.player p1 ON m.player1 = p1.id
-                     JOIN tennis.player p2 ON m.player2 = p2.id
-                     JOIN tennis.player w ON m.winner = w.id
+            FROM match m
+                     JOIN player p1 ON m.player1 = p1.id
+                     JOIN player p2 ON m.player2 = p2.id
+                     JOIN player w ON m.winner = w.id
             WHERE p1.name = '%s' OR p2.name = '%s'
             LIMIT %d OFFSET %d;
             """;
+    private static final String QUERY_SAVE = """
+            INSERT INTO match (player1, player2, winner)
+            VALUES (?,?,?);
+            """;
 
-    private static final String QUERY_PAGE_COUNT = "SELECT COUNT(*) AS total FROM tennis.match";
+    private static final String QUERY_PAGE_COUNT = "SELECT COUNT(*) AS total FROM match";
 
     public List<Match> findAll(int limit, int offset, String filter) {
 
@@ -77,6 +81,18 @@ public class MatchRepository {
         }
     }
 
+    public void save(Match match) {
+        try (Connection connection = ConnectionManager.get();
+             PreparedStatement statement = connection.prepareStatement(QUERY_SAVE)) {
+            statement.setLong(1, match.getPlayer1().getId());
+            statement.setLong(2, match.getPlayer2().getId());
+            statement.setLong(3, match.getWinner().getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private Match buildMatch(ResultSet resultSet) throws SQLException {
         return new Match(
                 resultSet.getLong("match_id"),
@@ -84,9 +100,5 @@ public class MatchRepository {
                 new Player(resultSet.getString("player2_name")),
                 new Player(resultSet.getString("winner_name"))
         );
-    }
-
-    public void save(Match match) {
-
     }
 }
