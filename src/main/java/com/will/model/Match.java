@@ -1,5 +1,13 @@
 package com.will.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,10 +21,25 @@ import lombok.ToString;
 @Setter
 @ToString
 @Builder
+@Entity
+@Table(name = "match")
 public class Match {
+
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne()
+    @JoinColumn(name = "player1_id", referencedColumnName = "id")
     private Player player1;
+
+    @ManyToOne()
+    @JoinColumn(name = "player2_id", referencedColumnName = "id")
     private Player player2;
+
+    @ManyToOne
+    @JoinColumn(name = "winner_id", referencedColumnName = "id")
     private Player winner;
 
     public Match(Player player1, Player player2) {
