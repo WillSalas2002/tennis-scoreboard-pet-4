@@ -49,7 +49,7 @@ public class HibernateUtil {
         configuration.addAnnotatedClass(Match.class);
         configuration.addProperties(loadProperties());
 
-        // We need ServiceRegistry in order to obtain more control over hibernate (custom connection pool, caching etc.)
+        // We need ServiceRegistry in order to obtain more control over hibernate (custom connection pool, caching etc...)
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties())
                 .build();

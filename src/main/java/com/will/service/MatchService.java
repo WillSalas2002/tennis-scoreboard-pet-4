@@ -13,7 +13,6 @@ public class MatchService {
     private final MatchRepository matchRepository = new MatchRepository();
 
     public List<MatchDTO> findAll(String pageStr, String filter) {
-
         int page = DEFAULT_PAGE;
         if (pageStr != null && pageStr.matches("^\\d+$")) {
             page = Integer.parseInt(pageStr);
@@ -26,11 +25,10 @@ public class MatchService {
     }
 
     public int getPageCount() {
+        int totalMatchesCount = matchRepository.getTotalMatchesCount();
+        int division = totalMatchesCount / RECORDS_PER_PAGE;
 
-        int totalRowCount = matchRepository.getTotalRowCount();
-        int division = totalRowCount / RECORDS_PER_PAGE;
-
-        return totalRowCount % RECORDS_PER_PAGE == 0 ?
+        return totalMatchesCount % RECORDS_PER_PAGE == 0 ?
                 division : division + 1;
     }
 

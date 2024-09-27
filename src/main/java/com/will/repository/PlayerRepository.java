@@ -1,50 +1,41 @@
 package com.will.repository;
 
 import com.will.model.Player;
-import com.will.util.ConnectionManager;
+import com.will.util.HibernateUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Optional;
 
+@Slf4j
 public class PlayerRepository {
 
-    private final static String FIND_BY_NAME_SQL = "SELECT * FROM player WHERE name = ?";
-    private final static String SAVE_SQL = "INSERT INTO player (name) VALUES (?)";
+    private static final SessionFactory SESSION_FACTORY = HibernateUtil.getSessionFactory();
 
-    public Optional<Player> findByPlayerName(String name) {
-        try (Connection connection = ConnectionManager.get();
-             PreparedStatement statement = connection.prepareStatement(FIND_BY_NAME_SQL)) {
-            statement.setString(1, name);
-            ResultSet resultSet = statement.executeQuery();
-            Player resultPlayer = null;
-            if (resultSet.next()) {
-                resultPlayer = new Player(
-                        resultSet.getLong("id"),
-                        resultSet.getString("name")
-                );
-            }
-            return Optional.ofNullable(resultPlayer);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+    public Optional<Player> findByName(String name) {
+        try (Session session = SESSION_FACTORY.openSession()) {
+            Player player = session
+                    .createQuery("FROM Player p WHERE p.name =: name", Player.class)
+                    .setParameter("name", name)
+                    .uniqueResult();
+            log.info("Fetching a player with name {}", name);
+            return Optional.ofNullable(player);
         }
     }
 
     public Player save(Player player) {
-        try (Connection connection = ConnectionManager.get();
-             PreparedStatement statement = connection.prepareStatement(SAVE_SQL, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, player.getName());
-            statement.executeUpdate();
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                player.setId(generatedKeys.getLong("id"));
+        try (Session session = SESSION_FACTORY.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            session.persist(player);
+            transaction.commit();
+            if (player.getId() != null) {
+                log.info("Error happened when trying to save player: {}", player);
+                throw new RuntimeException("Couldn't save player");
             }
-            return player;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.info("Successfully saved player: {}", player);
         }
+        return player;
     }
 }
