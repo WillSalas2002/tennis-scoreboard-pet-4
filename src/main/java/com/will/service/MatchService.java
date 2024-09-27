@@ -1,6 +1,7 @@
 package com.will.service;
 
 import com.will.dto.MatchDTO;
+import com.will.mapper.MatchMapper;
 import com.will.model.Match;
 import com.will.repository.MatchRepository;
 
@@ -11,6 +12,7 @@ public class MatchService {
     private final int RECORDS_PER_PAGE = 10;
     private final int DEFAULT_PAGE = 1;
     private final MatchRepository matchRepository = new MatchRepository();
+    private final MatchMapper matchMapper = MatchMapper.INSTANCE;
 
     public List<MatchDTO> findAll(String pageStr, String filter) {
         int page = DEFAULT_PAGE;
@@ -20,7 +22,7 @@ public class MatchService {
         List<Match> matches = matchRepository.findAll(RECORDS_PER_PAGE, (page - 1) * RECORDS_PER_PAGE, filter);
 
         return matches.stream()
-                .map(this::convertToMatchDTO)
+                .map(matchMapper::convertMatchToMatchDTO)
                 .collect(Collectors.toList());
     }
 
@@ -30,14 +32,5 @@ public class MatchService {
 
         return totalMatchesCount % RECORDS_PER_PAGE == 0 ?
                 division : division + 1;
-    }
-
-    private MatchDTO convertToMatchDTO(Match match) {
-        return new MatchDTO(
-                match.getId(),
-                match.getPlayer1().getName(),
-                match.getPlayer2().getName(),
-                match.getWinner().getName()
-        );
     }
 }
