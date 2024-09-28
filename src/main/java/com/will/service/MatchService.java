@@ -26,8 +26,8 @@ public class MatchService {
                 .collect(Collectors.toList());
     }
 
-    public int getPageCount() {
-        int totalMatchesCount = matchRepository.getTotalMatchesCount();
+    public int getPageCount(String filter) {
+        int totalMatchesCount = matchRepository.getTotalMatchesCount(filter);
         int division = totalMatchesCount / RECORDS_PER_PAGE;
 
         return totalMatchesCount % RECORDS_PER_PAGE == 0 ?

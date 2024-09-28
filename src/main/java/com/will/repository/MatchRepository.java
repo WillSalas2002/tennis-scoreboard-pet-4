@@ -15,13 +15,23 @@ public class MatchRepository {
 
     private static final SessionFactory SESSION_FACTORY = HibernateUtil.getSessionFactory();
 
-    public int getTotalMatchesCount() {
+    public int getTotalMatchesCount(String filter) {
+
         try (Session session = SESSION_FACTORY.openSession()) {
-            Long result = session
-                    .createQuery("SELECT COUNT(*) FROM Match m", Long.class)
-                    .getSingleResult();
-            log.info("Getting count of all matches");
-            return result.intValue();
+
+            StringBuilder queryBuilder = new StringBuilder("SELECT COUNT(m.id) FROM Match m");
+
+            includeFilterIfNotNull(filter, queryBuilder);
+
+            Query<Long> query = session.createQuery(queryBuilder.toString(), Long.class);
+            if (filter != null) {
+                query.setParameter("filter", filter + "%");
+            }
+
+            int count = query.uniqueResult().intValue();
+            log.info("Count of matches with filter = {} is {}", filter, count);
+
+            return count;
         }
     }
 
@@ -35,19 +45,16 @@ public class MatchRepository {
                             JOIN FETCH m.winner
                     """);
 
-            if (filter != null) {
-                queryBuilder.append(" WHERE m.player1.name =:filter OR m.player2.name =:filter");
-            }
+            includeFilterIfNotNull(filter, queryBuilder);
 
             Query<Match> query = session
                     .createQuery(queryBuilder.toString(), Match.class)
                     .setFirstResult(offset)
                     .setMaxResults(limit);
 
-            if (filter != null) {
-                query.setParameter("filter", filter);
-            }
-            log.info("Fetching matches with pagination (limit {}, offset {}) and/or filter {}", limit, offset, filter);
+            setParameterFilterIfNotNull(filter, query);
+            log.info("Fetching matches with pagination (limit = {}, offset = {}) and/or filter = {}", limit, offset, filter);
+
             return query.getResultList();
         }
     }
@@ -62,6 +69,18 @@ public class MatchRepository {
                 throw new RuntimeException("Couldn't save match");
             }
             log.info("Successfully saved match: {}", match);
+        }
+    }
+
+    private void includeFilterIfNotNull(String filter, StringBuilder queryBuilder) {
+        if (filter != null) {
+            queryBuilder.append(" WHERE m.player1.name LIKE :filter OR m.player2.name LIKE :filter");
+        }
+    }
+
+    private void setParameterFilterIfNotNull(String filter, Query<Match> query) {
+        if (filter != null) {
+            query.setParameter("filter", filter + "%");
         }
     }
 }
