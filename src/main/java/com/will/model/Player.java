@@ -18,7 +18,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(name = "player")
+@Table(name = "player", schema = "tennis")
 public class Player {
 
     @Id

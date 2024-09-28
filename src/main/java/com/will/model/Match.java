@@ -23,7 +23,7 @@ import lombok.ToString;
 @ToString
 @Builder
 @Entity
-@Table(name = "match")
+@Table(name = "match", schema = "tennis")
 public class Match {
 
     @Id
