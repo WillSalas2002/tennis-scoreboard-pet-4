@@ -7,10 +7,10 @@ import com.will.repository.MatchRepository;
 
 public class FinishedMatchesPersistenceService {
 
-    private final MatchRepository repository = new MatchRepository();
+    private final MatchRepository matchRepository = new MatchRepository();
     public void save(MatchScoreModel matchScoreModel) {
         Match match = buildMatch(matchScoreModel);
-        repository.save(match);
+        matchRepository.save(match);
     }
 
     private Match buildMatch(MatchScoreModel matchScoreModel) {

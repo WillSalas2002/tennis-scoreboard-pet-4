@@ -22,8 +22,8 @@ public class MatchesServlet extends HttpServlet {
         String pageStr = req.getParameter("page");
         String filter = req.getParameter("filterByName");
 
+        int pageCount = service.getPageCount(filter);
         List<MatchDTO> matches = service.findAll(pageStr, filter);
-        int pageCount = service.getPageCount();
 
         req.setAttribute("matches", matches);
         req.setAttribute("pageCount", pageCount);

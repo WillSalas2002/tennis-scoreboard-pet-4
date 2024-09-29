@@ -1,104 +1,86 @@
 package com.will.repository;
 
 import com.will.model.Match;
-import com.will.model.Player;
-import com.will.util.ConnectionManager;
+import com.will.util.HibernateUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class MatchRepository {
 
-    private static final String QUERY_WITH_PAGINATION = """
-            SELECT m.id    AS match_id,
-                   p1.name AS player1_name,
-                   p2.name AS player2_name,
-                   w.name  AS winner_name
-            FROM match m
-                     JOIN player p1 ON m.player1 = p1.id
-                     JOIN player p2 ON m.player2 = p2.id
-                     JOIN player w  ON m.winner  = w.id
-            LIMIT %d OFFSET %d;
-            """;
-    private static final String QUERY_WITH_FILTER_AND_PAGINATION = """
-            SELECT m.id    AS match_id,
-                   p1.name AS player1_name,
-                   p2.name AS player2_name,
-                   w.name  AS winner_name
-            FROM match m
-                     JOIN player p1 ON m.player1 = p1.id
-                     JOIN player p2 ON m.player2 = p2.id
-                     JOIN player w ON m.winner = w.id
-            WHERE p1.name = '%s' OR p2.name = '%s'
-            LIMIT %d OFFSET %d;
-            """;
-    private static final String QUERY_SAVE = """
-            INSERT INTO match (player1, player2, winner)
-            VALUES (?,?,?);
-            """;
+    private static final SessionFactory SESSION_FACTORY = HibernateUtil.getSessionFactory();
 
-    private static final String QUERY_PAGE_COUNT = "SELECT COUNT(*) AS total FROM match";
+    public int getTotalMatchesCount(String filter) {
 
-    public List<Match> findAll(int limit, int offset, String filter) {
+        try (Session session = SESSION_FACTORY.openSession()) {
 
-        String sql;
-        if (filter != null && !filter.isEmpty()) {
-            sql = String.format(QUERY_WITH_FILTER_AND_PAGINATION, filter, filter, limit, offset);
-        } else {
-            sql = String.format(QUERY_WITH_PAGINATION, limit, offset);
-        }
+            StringBuilder queryBuilder = new StringBuilder("SELECT COUNT(m.id) FROM Match m");
 
-        try (Connection connection = ConnectionManager.get();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            List<Match> matches = new ArrayList<>();
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                Match match = buildMatch(resultSet);
-                matches.add(match);
+            includeFilterIfNotNull(filter, queryBuilder);
+
+            Query<Long> query = session.createQuery(queryBuilder.toString(), Long.class);
+            if (filter != null) {
+                query.setParameter("filter", filter + "%");
             }
 
-            return matches;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            int count = query.uniqueResult().intValue();
+            log.info("Count of matches with filter = {} is {}", filter, count);
+
+            return count;
         }
     }
 
-    public int getTotalRowCount() {
-        try (Connection connection = ConnectionManager.get();
-             PreparedStatement statement = connection.prepareStatement(QUERY_PAGE_COUNT)) {
-            ResultSet resultSet = statement.executeQuery();
-            int totalCount = 0;
-            if (resultSet.next()) {
-                totalCount = resultSet.getInt("total");
-            }
-            return totalCount;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+    public List<Match> findAll(int limit, int offset, String filter) {
+        try (Session session = SESSION_FACTORY.openSession()) {
+            StringBuilder queryBuilder = new StringBuilder("""
+                    SELECT m
+                            FROM Match m
+                            JOIN FETCH m.player1
+                            JOIN FETCH m.player2
+                            JOIN FETCH m.winner
+                    """);
+
+            includeFilterIfNotNull(filter, queryBuilder);
+
+            Query<Match> query = session
+                    .createQuery(queryBuilder.toString(), Match.class)
+                    .setFirstResult(offset)
+                    .setMaxResults(limit);
+
+            setParameterFilterIfNotNull(filter, query);
+            log.info("Fetching matches with pagination (limit = {}, offset = {}) and/or filter = {}", limit, offset, filter);
+
+            return query.getResultList();
         }
     }
 
     public void save(Match match) {
-        try (Connection connection = ConnectionManager.get();
-             PreparedStatement statement = connection.prepareStatement(QUERY_SAVE)) {
-            statement.setLong(1, match.getPlayer1().getId());
-            statement.setLong(2, match.getPlayer2().getId());
-            statement.setLong(3, match.getWinner().getId());
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        try (Session session = SESSION_FACTORY.openSession()) {
+            Transaction transaction = session.beginTransaction();
+            session.persist(match);
+            transaction.commit();
+            if (match.getId() == null) {
+                log.info("Error happened when trying to save match: {}", match);
+                throw new RuntimeException("Couldn't save match");
+            }
+            log.info("Successfully saved match: {}", match);
         }
     }
 
-    private Match buildMatch(ResultSet resultSet) throws SQLException {
-        return new Match(
-                resultSet.getLong("match_id"),
-                new Player(resultSet.getString("player1_name")),
-                new Player(resultSet.getString("player2_name")),
-                new Player(resultSet.getString("winner_name"))
-        );
+    private void includeFilterIfNotNull(String filter, StringBuilder queryBuilder) {
+        if (filter != null) {
+            queryBuilder.append(" WHERE m.player1.name LIKE :filter OR m.player2.name LIKE :filter");
+        }
+    }
+
+    private void setParameterFilterIfNotNull(String filter, Query<Match> query) {
+        if (filter != null) {
+            query.setParameter("filter", filter + "%");
+        }
     }
 }
