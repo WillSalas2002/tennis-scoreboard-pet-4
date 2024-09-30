@@ -12,7 +12,4 @@ import lombok.Setter;
 public class PlayerDTO {
     private Long id;
     private String name;
-    private int gameScore;
-    private int setScore;
-    private int matchScore;
 }

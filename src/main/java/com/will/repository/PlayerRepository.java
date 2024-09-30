@@ -30,7 +30,7 @@ public class PlayerRepository {
             Transaction transaction = session.beginTransaction();
             session.persist(player);
             transaction.commit();
-            if (player.getId() != null) {
+            if (player.getId() == null) {
                 log.info("Error happened when trying to save player: {}", player);
                 throw new RuntimeException("Couldn't save player");
             }

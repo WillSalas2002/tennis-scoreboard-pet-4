@@ -1,7 +1,6 @@
 package com.will.controller;
 
 import com.will.dto.MatchScoreModel;
-import com.will.dto.MatchScoreView;
 import com.will.dto.PlayerDTO;
 import com.will.service.OngoingMatchesService;
 import com.will.service.PlayerService;
@@ -19,6 +18,7 @@ import java.util.UUID;
 @WebServlet("/newMatch")
 public class NewMatchServlet extends HttpServlet {
     private final PlayerService playerService = new PlayerService();
+    private final OngoingMatchesService ongoingMatchesService = new OngoingMatchesService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -39,7 +39,7 @@ public class NewMatchServlet extends HttpServlet {
         MatchScore matchScore = new MatchScore(2);
         MatchScoreModel matchScoreModel = new MatchScoreModel(playerDTO1, playerDTO2, matchScore);
 
-        OngoingMatchesService.addMatch(uuid, matchScoreModel);
+        ongoingMatchesService.save(uuid, matchScoreModel);
 
         resp.sendRedirect(req.getContextPath() + "/matchScore?uuid=" + uuid);
     }

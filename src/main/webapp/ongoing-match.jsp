@@ -34,35 +34,28 @@
 <table>
     <tr>
         <th>Player</th>
-        <th>Game</th>
+        <c:choose>
+            <c:when test="${requestScope.matchScoreView.gameState == 'REGULAR'}">
+                <th>Game</th>
+            </c:when>
+            <c:otherwise>
+                <th>Tie-Break</th>
+            </c:otherwise>
+        </c:choose>
         <th>Set</th>
         <th>Match</th>
     </tr>
     <tr>
-        <td>${requestScope.matchScoreModel.player1.name}</td>
-        <c:choose>
-            <c:when test="${requestScope.matchScoreModel.matchScore.currentSet.currentGame.gameState == 'REGULAR'}">
-                <td>${requestScope.matchScoreModel.matchScore.currentSet.currentGame.getPlayerScore(0).pointCode}</td>
-            </c:when>
-            <c:otherwise>
-                <td>${requestScope.matchScoreModel.matchScore.currentSet.currentGame.getPlayerScore(0)}</td>
-            </c:otherwise>
-        </c:choose>
-        <td>${requestScope.matchScoreModel.matchScore.currentSet.getPlayerScore(0)}</td>
-        <td>${requestScope.matchScoreModel.matchScore.getPlayerScore(0)}</td>
+        <td>${requestScope.matchScoreView.player1Name}</td>
+        <td>${requestScope.matchScoreView.player1GameScore}</td>
+        <td>${requestScope.matchScoreView.player1SetScore}</td>
+        <td>${requestScope.matchScoreView.player1MatchScore}</td>
     </tr>
     <tr>
-        <td>${requestScope.matchScoreModel.player2.name}</td>
-        <c:choose>
-            <c:when test="${requestScope.matchScoreModel.matchScore.currentSet.currentGame.gameState == 'REGULAR'}">
-                <td>${requestScope.matchScoreModel.matchScore.currentSet.currentGame.getPlayerScore(1).pointCode}</td>
-            </c:when>
-            <c:otherwise>
-                <td>${requestScope.matchScoreModel.matchScore.currentSet.currentGame.getPlayerScore(1)}</td>
-            </c:otherwise>
-        </c:choose>
-        <td>${requestScope.matchScoreModel.matchScore.currentSet.getPlayerScore(1)}</td>
-        <td>${requestScope.matchScoreModel.matchScore.getPlayerScore(1)}</td>
+        <td>${requestScope.matchScoreView.player2Name}</td>
+        <td>${requestScope.matchScoreView.player2GameScore}</td>
+        <td>${requestScope.matchScoreView.player2SetScore}</td>
+        <td>${requestScope.matchScoreView.player2MatchScore}</td>
     </tr>
 </table>
 
@@ -70,13 +63,13 @@
 <div class="button-container">
     <form id="player1-form" method="POST"
           action="${pageContext.request.contextPath}/matchScore?uuid=${requestScope.uuid}">
-        <input type="hidden" name="scorerId" value="${requestScope.matchScoreModel.player1.id}">
+        <input type="hidden" name="scorerId" value="${requestScope.matchScoreView.player1Id}">
         <button type="submit">Игрок 1 выиграл текущее очко</button>
     </form>
 
     <form id="player2-form" method="POST"
           action="${pageContext.request.contextPath}/matchScore?uuid=${requestScope.uuid}">
-        <input type="hidden" name="scorerId" value="${requestScope.matchScoreModel.player2.id}">
+        <input type="hidden" name="scorerId" value="${requestScope.matchScoreView.player2Id}">
         <button type="submit">Игрок 2 выиграл текущее очко</button>
     </form>
 </div>

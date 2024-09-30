@@ -1,6 +1,7 @@
 package com.will.controller;
 
 import com.will.dto.MatchScoreModel;
+import com.will.dto.MatchScoreView;
 import com.will.service.FinishedMatchesPersistenceService;
 import com.will.service.MatchScoreCalculationService;
 import com.will.service.OngoingMatchesService;
@@ -17,15 +18,16 @@ import java.util.UUID;
 
 @WebServlet("/matchScore")
 public class MatchScoreServlet extends HttpServlet {
+    private final OngoingMatchesService ongoingMatchesService = new OngoingMatchesService();
     private final MatchScoreCalculationService calculationService = new MatchScoreCalculationService();
     private final FinishedMatchesPersistenceService persistenceService = new FinishedMatchesPersistenceService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String uuid = req.getParameter("uuid");
-        MatchScoreModel matchScoreModel = OngoingMatchesService.getMatch(uuid);
+        MatchScoreView matchScoreView = ongoingMatchesService.findMatchView(uuid);
 
-        req.setAttribute("matchScoreModel", matchScoreModel);
+        req.setAttribute("matchScoreView", matchScoreView);
         req.setAttribute("uuid", uuid);
         req.getRequestDispatcher(PathFinder.find("ongoing-match")).forward(req, resp);
     }
@@ -34,7 +36,7 @@ public class MatchScoreServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String uuidStr = req.getParameter("uuid");
         String scorerIdStr = req.getParameter("scorerId");
-        MatchScoreModel matchScoreModel = OngoingMatchesService.getMatch(uuidStr);
+        MatchScoreModel matchScoreModel = ongoingMatchesService.findMatch(uuidStr);
 
         State state = calculationService.updateScore(matchScoreModel, Long.valueOf(scorerIdStr));
 
@@ -45,7 +47,7 @@ public class MatchScoreServlet extends HttpServlet {
                 matchScoreModel.setWinner(matchScoreModel.getPlayer2());
             }
             persistenceService.save(matchScoreModel);
-            OngoingMatchesService.removeMatch(UUID.fromString(uuidStr));
+            ongoingMatchesService.delete(UUID.fromString(uuidStr));
             // TODO: need redirect to the page where final score will be displayed
             resp.sendRedirect(PathFinder.find("home"));
             return;
