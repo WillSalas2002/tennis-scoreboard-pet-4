@@ -1,8 +1,8 @@
 package com.will.controller;
 
 import com.will.dto.MatchScoreModel;
+import com.will.dto.MatchScoreView;
 import com.will.dto.PlayerDTO;
-import com.will.dto.PlayerScoreModel;
 import com.will.service.OngoingMatchesService;
 import com.will.service.PlayerService;
 import com.will.service.calculation.MatchScore;

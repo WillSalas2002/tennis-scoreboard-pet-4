@@ -1,10 +1,10 @@
 package com.will.controller;
 
+import com.will.dto.MatchScoreModel;
 import com.will.service.FinishedMatchesPersistenceService;
+import com.will.service.MatchScoreCalculationService;
 import com.will.service.OngoingMatchesService;
 import com.will.service.calculation.State;
-import com.will.service.MatchScoreCalculationService;
-import com.will.dto.MatchScoreModel;
 import com.will.util.PathFinder;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -46,6 +46,7 @@ public class MatchScoreServlet extends HttpServlet {
             }
             persistenceService.save(matchScoreModel);
             OngoingMatchesService.removeMatch(UUID.fromString(uuidStr));
+            // TODO: need redirect to the page where final score will be displayed
             resp.sendRedirect(PathFinder.find("home"));
             return;
         }

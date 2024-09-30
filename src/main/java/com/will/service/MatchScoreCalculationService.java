@@ -6,21 +6,19 @@ import com.will.dto.MatchScoreModel;
 
 public class MatchScoreCalculationService {
 
-
-    public State updateScore(MatchScoreModel match, Long scorerId) {
+    public State updateScore(MatchScoreModel matchScoreModel, Long scorerId) {
 
         State state;
-        MatchScore matchScore = match.getMatchScore();
+        MatchScore matchScore = matchScoreModel.getMatchScore();
 
         // Player whose id is LESS - is taking playerNumber = 0
         // Player whose id is MORE - is taking playerNumber = 1
-        if (scorerId - match.getPlayer1().getId() < 0 ||
-                scorerId - match.getPlayer2().getId() < 0) {
+        if (scorerId < matchScoreModel.getPlayer1().getId() ||
+                scorerId < matchScoreModel.getPlayer2().getId()) {
             state = matchScore.pointWon(0);
         } else {
             state = matchScore.pointWon(1);
         }
-
         return state;
     }
 }
