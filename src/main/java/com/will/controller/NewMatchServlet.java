@@ -26,21 +26,30 @@ public class NewMatchServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 
         String player1Name = req.getParameter("player1");
         String player2Name = req.getParameter("player2");
 
-        UUID uuid = UUID.randomUUID();
+        if (!isValid(player1Name) && !isValid(player2Name)) {
+            req.setAttribute("playerNameError", "Name should not be empty and should contain at least 3 chars");
+            req.getRequestDispatcher(PathFinder.find("new-match")).forward(req, resp);
+            return;
+        }
 
-        PlayerDTO playerDTO1 = playerService.findOrSave(player1Name);
-        PlayerDTO playerDTO2 = playerService.findOrSave(player2Name);
+        PlayerDTO playerDTO1 = playerService.findOrSave(player1Name.trim());
+        PlayerDTO playerDTO2 = playerService.findOrSave(player2Name.trim());
         //TODO: make game match count dynamic
         MatchScore matchScore = new MatchScore(2);
         MatchScoreModel matchScoreModel = new MatchScoreModel(playerDTO1, playerDTO2, matchScore);
 
+        UUID uuid = UUID.randomUUID();
         ongoingMatchesService.save(uuid, matchScoreModel);
 
         resp.sendRedirect(req.getContextPath() + "/matchScore?uuid=" + uuid);
+    }
+
+    private boolean isValid(String playerName) {
+        return playerName != null && playerName.trim().length() > 3;
     }
 }
