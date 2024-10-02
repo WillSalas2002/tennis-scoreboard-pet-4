@@ -3,6 +3,7 @@ package com.will.util;
 import com.will.model.Match;
 import com.will.model.Player;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -10,10 +11,11 @@ import org.hibernate.service.ServiceRegistry;
 
 import java.util.Properties;
 
+@Slf4j
 @UtilityClass
 public class HibernateUtil {
 
-    private static SessionFactory sessionFactory;
+    private static final SessionFactory sessionFactory;
     private static final String KEY_DRIVER_CLASS = "connection.driver_class";
     private static final String KEY_CONNECTION_URL = "hibernate.connection.url";
     private static final String KEY_CONNECTION_USERNAME = "hibernate.connection.username";
@@ -23,6 +25,31 @@ public class HibernateUtil {
     private static final String KEY_DDL_AUTO = "hibernate.hbm2ddl.auto";
     private static final String KEY_SESSION_CONTEXT_CLASS = "hibernate.current_session_context_class";
     private static final String KEY_SQL_COMMENTS = "hibernate.use_sql_comments";
+
+    static {
+        Configuration configuration = new Configuration();
+
+        configuration.addAnnotatedClass(Player.class);
+        configuration.addAnnotatedClass(Match.class);
+        configuration.addProperties(loadProperties());
+
+        // We need ServiceRegistry in order to obtain more control over hibernate (custom connection pool, caching etc...)
+        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                .applySettings(configuration.getProperties())
+                .build();
+        log.info("Configuring session factory");
+        sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+    }
+
+    public static SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
+    public static void closeSessionFactory() {
+        if (sessionFactory != null) {
+            sessionFactory.close();
+        }
+    }
 
     private static Properties loadProperties() {
         Properties properties = new Properties();
@@ -38,30 +65,7 @@ public class HibernateUtil {
         properties.setProperty(KEY_SQL_COMMENTS, PropertiesUtil.get(KEY_SQL_COMMENTS));
 
         properties.setProperty(KEY_SESSION_CONTEXT_CLASS, PropertiesUtil.get(KEY_SESSION_CONTEXT_CLASS));
-
+        log.info("Setting properties");
         return properties;
-    }
-
-    public static SessionFactory getSessionFactory() {
-        Configuration configuration = new Configuration();
-
-        configuration.addAnnotatedClass(Player.class);
-        configuration.addAnnotatedClass(Match.class);
-        configuration.addProperties(loadProperties());
-
-        // We need ServiceRegistry in order to obtain more control over hibernate (custom connection pool, caching etc...)
-        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                .applySettings(configuration.getProperties())
-                .build();
-
-        sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-
-        return sessionFactory;
-    }
-
-    public static void closeSessionFactory() {
-        if (sessionFactory != null) {
-            sessionFactory.close();
-        }
     }
 }
