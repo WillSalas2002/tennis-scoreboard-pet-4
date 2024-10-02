@@ -1,16 +1,16 @@
 CREATE TABLE Player
 (
-    id   INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id   SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE
 );
 
 CREATE TABLE Match
 (
-    id      INTEGER PRIMARY KEY AUTO_INCREMENT,
-    player1 INTEGER NOT NULL,
-    player2 INTEGER NOT NULL,
-    winner  INTEGER NOT NULL,
-    FOREIGN KEY (player1) REFERENCES Players (id),
-    FOREIGN KEY (player2) REFERENCES Players (id),
-    FOREIGN KEY (winner) REFERENCES Players (id)
+    id      SERIAL PRIMARY KEY,
+    player1_id INTEGER NOT NULL,
+    player2_id INTEGER NOT NULL,
+    winner_id  INTEGER NOT NULL,
+    FOREIGN KEY (player1_id) REFERENCES Player (id),
+    FOREIGN KEY (player2_id) REFERENCES Player (id),
+    FOREIGN KEY (winner_id) REFERENCES Player (id)
 );

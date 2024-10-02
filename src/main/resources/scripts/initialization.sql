@@ -12,7 +12,7 @@ VALUES ('Roger Federer'),
        ('Nick Kyrgios');
 
 
-INSERT INTO Match (player1, player2, winner)
+INSERT INTO Match (player1_id, player2_id, winner_id)
 VALUES (1, 2, 1),
        (3, 4, 3),
        (5, 6, 5),
