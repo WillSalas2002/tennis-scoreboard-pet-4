@@ -31,7 +31,7 @@ public class NewMatchServlet extends HttpServlet {
         String player1Name = req.getParameter("player1");
         String player2Name = req.getParameter("player2");
 
-        if (!isValid(player1Name) && !isValid(player2Name)) {
+        if (!isValid(player1Name) || !isValid(player2Name)) {
             req.setAttribute("playerNameError", "Name should not be empty and should contain at least 3 chars");
             req.getRequestDispatcher(PathFinder.find("new-match")).forward(req, resp);
             return;
