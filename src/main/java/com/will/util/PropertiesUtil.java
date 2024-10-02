@@ -20,7 +20,7 @@ public class PropertiesUtil {
 
     private static void loadProperties() {
         try (InputStream inputStream = PropertiesUtil.class
-                .getClassLoader().getResourceAsStream("application.properties")) {
+                .getClassLoader().getResourceAsStream("application-h2.properties")) {
             PROPERTIES.load(inputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
