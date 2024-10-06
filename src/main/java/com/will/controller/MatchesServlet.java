@@ -29,6 +29,6 @@ public class MatchesServlet extends HttpServlet {
         req.setAttribute("pageCount", pageCount);
         req.setAttribute("filterByName", filter);
 
-        req.getRequestDispatcher(find("matches")).forward(req, resp);
+        req.getRequestDispatcher(find("finished-matches")).forward(req, resp);
     }
 }

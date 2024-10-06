@@ -1,4 +1,4 @@
-*{
+* {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
@@ -9,6 +9,15 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+}
+
+.search-bar {
+    background-color: lightgreen;
+    padding: 10px;
+}
+
+.search-bar input {
+    margin: 0px 10px;
 }
 
 header {
@@ -52,63 +61,82 @@ header div a:active {
 }
 
 main {
-    background-color: red;
+    background-color: aqua;
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    padding: 60px 0;
 }
 
-.buttons {
+.matches-container {
+    width: 80%;
+    max-width: 800px;
+
+    flex: 1;
     display: flex;
-    justify-content: space-around; /* Ensure even spacing around buttons */
-    gap: 20px; /* Adds space between buttons */
-    max-width: 600px;
-    width: 100%;
-    margin: 0 auto; /* Center the buttons container */
-    padding: 20px 0; /* Adds vertical space for breathing room */
+
+    flex-direction: column;
+    justify-content: center;
 }
 
-.buttons button {
-    background-color: #1e90ff; /* Vibrant blue for the buttons */
+.match {
+    display: grid; /* Use grid layout */
+    grid-template-columns: 1fr 2fr 2fr; /* Set column sizes */
+    background-color: burlywood;
+    font-size: 18px;
+}
+
+.match:nth-child(1) {
+    font-weight: bold;
+    font-size: 21px;
+    border-bottom: 1px solid #000;
+}
+
+.data {
+    padding: 10px 0;
+    background-color: rgb(151, 116, 71);
     color: white;
+    text-align: center;
+}
+
+.data:nth-child(2){
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+}
+
+.pagination {
+    display: flex;
+    flex-direction: row;
+    background-color: aquamarine;
+    
+}
+
+.button {
+    background-color: lightblue;
+    margin: 0 2px;
+}
+
+.pagination .button:first-child,
+.pagination .button:last-child {
+    background-color: lightcoral;
+}
+
+.pagination input[type="submit"] {
+    width: 100%;
+    margin: 0;
+    padding: 8px;
+    background-color: lightblue;
     border: none;
-    padding: 12px 20px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adds shadow for depth */
 }
 
-.buttons button:hover {
-    background-color: #12b700; /* Change to bright yellow on hover */
-    transform: translateY(-2px); /* Slight lift effect */
+.pagination input[type="submit"]:hover {
+    background-color: lightpink;
 }
-
-.buttons button:active {
-    background-color: #12b700; /* Slightly darker yellow on click */
-    transform: translateY(0); /* Reset transform */
-}
-
-/*
-@media (max-width: 768px) {
-    .buttons {
-        flex-direction: column; /* Stack buttons vertically on smaller screens
-        align-items: center;
-        gap: 15px;
-    }
-
-    .buttons button {
-        width: 100%; /* Make buttons full width on smaller screens 
-    }
-}
-*/
 
 footer {
+    text-align: center;
     color: white;
     background-color: green;
-    text-align: center;
     padding: 15px 30px;
 }

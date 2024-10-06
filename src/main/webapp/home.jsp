@@ -5,25 +5,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-    <link rel="stylesheet" href="./css/home.css"/>
+    <link rel="stylesheet" href="css/home.css"/>
 </head>
 
 <body>
-<header>
-    This is header
-</header>
-<div class="container">
-    <div class="button">
-        <a href="newMatch">New Match</a>
-    </div>
-    <div class="button">
-        <a href="${pageContext.request.contextPath}/matches">Completed Matches</a>
-    </div>
-</div>
-<div></div>
-<footer>
-    This is footer
-</footer>
-</body>
+    <header>
+        <div>
+            <div><a href="${pageContext.request.contextPath}/newMatch">New Match</a></div>
+            <div class="page-title">Tennis Scoreboard Game</div>
+            <div><a href="${pageContext.request.contextPath}/matches">Finished Matches</a></div>
+        </div> 
+    </header>
 
+    <main>
+        <div class="buttons">
+            <div>
+                <a href="${pageContext.request.contextPath}/newMatch">
+                    <button>New Match</button>
+                </a>
+            </div>
+            <div>
+                <a href="${pageContext.request.contextPath}/matches">
+                    <button>Finished Matches</button>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        Authored by Will Salas
+    </footer>
+</body>
 </html>
