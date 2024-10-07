@@ -19,7 +19,7 @@
     <main>
         <div class="search-bar">
             <form>
-                <input type="text" name="filter_by_name" placeholder="Enter name..."/>
+                <input type="text" name="filterByName" placeholder="Enter name..."/>
                 <input type="submit" value="Search"/>
             </form>
         </div>
@@ -38,20 +38,59 @@
             </c:forEach>
         </div>
         <div class="pagination">
-            <form class="button">
-                <input type="submit" value="&lt;&lt;"/>
+            <c:set var="currentPage" value="${param.page != null ? param.page : 1}" />
+
+            <form class="button" method="GET" action="${pageContext.request.contextPath}/matches">
+                <c:choose>
+                    <c:when test="${currentPage == 1}">
+                        <input type="submit" value="&lt;&lt;" disabled/>
+                    </c:when>
+                    <c:otherwise>
+                        <input type="hidden" name="page" value="1"/>
+                        <input type="submit" value="&lt;&lt;"/>
+                    </c:otherwise>
+                </c:choose>
             </form>
-            <form class="button">
-                <input type="submit" value="&lt;"/>
+
+            <form class="button" method="GET" action="${pageContext.request.contextPath}/matches">
+                <c:choose>
+                    <c:when test="${currentPage == 1}">
+                        <input type="hidden" name="page" value="1"/>
+                        <input type="submit" value="&lt;" disabled/>
+                    </c:when>
+                    <c:otherwise>
+                        <input type="hidden" name="page" value="${currentPage - 1}"/>
+                        <input type="submit" value="&lt;"/>
+                    </c:otherwise>
+                </c:choose>
             </form>
+
             <form class="button">
-                <input type="submit" value="1"/>
+                <input type="submit" value="${currentPage}"/>
             </form>
-            <form class="button">
-                <input type="submit" value="&gt;"/>
+
+            <form class="button" method="GET" action="${pageContext.request.contextPath}/matches">
+                <c:choose>
+                    <c:when test="${currentPage == pageCount}">
+                        <input type="submit" value="&gt;" disabled/>
+                    </c:when>
+                    <c:otherwise>
+                        <input type="hidden" name="page" value="${currentPage + 1}"/>
+                        <input type="submit" value="&gt;"/>
+                    </c:otherwise>
+                </c:choose>
             </form>
-            <form class="button">
-                <input type="submit" value="&gt;&gt;"/>
+
+            <form class="button" method="GET" action="${pageContext.request.contextPath}/matches">
+                <c:choose>
+                    <c:when test="${currentPage == pageCount}">
+                        <input type="submit" value="&gt;&gt;" disabled/>
+                    </c:when>
+                    <c:otherwise>
+                        <input type="hidden" name="page" value="${pageCount}"/>
+                        <input type="submit" value="&gt;&gt;"/>
+                    </c:otherwise>
+                </c:choose>
             </form>
         </div>
     </main>
