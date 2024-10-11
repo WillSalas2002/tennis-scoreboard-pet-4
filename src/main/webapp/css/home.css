@@ -1,6 +1,7 @@
 *{
     padding: 0;
     margin: 0;
+    color: #ECDFCC;
     box-sizing: border-box;
     font-family: 'Arial', sans-serif;
 }
@@ -12,7 +13,6 @@ body {
 }
 
 header {
-    color: white;
     background-color: #1e90ff; /* A more vibrant blue */
     text-align: center;
     padding: 10px 20px;
@@ -30,21 +30,19 @@ header div {
 
 header div a {
     text-decoration: none;
-    color: white;
     font-size: 18px;
     font-weight: 600;
     transition: color 0.3s ease, transform 0.2s ease; /* Smooth transition for hover */
 }
 
 header div a:hover {
-    color: #006a17; /* Bright color on hover */
+    color: #E3FEF7; /* Bright color on hover */
     transform: translateY(-2px); /* Slight lift on hover */
 }
 
 .page-title {
     font-size: 24px;
     font-weight: 700;
-    color: white;
 }
 
 header div a:active {
@@ -52,7 +50,7 @@ header div a:active {
 }
 
 main {
-    background-color: red;
+    background-color: #181C14;
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
@@ -71,8 +69,7 @@ main {
 }
 
 .buttons button {
-    background-color: #1e90ff; /* Vibrant blue for the buttons */
-    color: white;
+    background-color: #007BFF; /* Vibrant blue for the buttons */
     border: none;
     padding: 12px 20px;
     border-radius: 5px;
@@ -107,7 +104,6 @@ main {
 */
 
 footer {
-    color: white;
     background-color: green;
     text-align: center;
     padding: 15px 30px;
