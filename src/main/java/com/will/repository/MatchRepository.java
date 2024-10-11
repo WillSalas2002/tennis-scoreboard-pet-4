@@ -25,7 +25,7 @@ public class MatchRepository {
 
             Query<Long> query = session.createQuery(queryBuilder.toString(), Long.class);
             if (filter != null) {
-                query.setParameter("filter", filter + "%");
+                query.setParameter("filter", filter.trim() + "%");
             }
 
             int count = query.uniqueResult().intValue();
@@ -80,7 +80,7 @@ public class MatchRepository {
 
     private void setParameterFilterIfNotNull(String filter, Query<Match> query) {
         if (filter != null) {
-            query.setParameter("filter", filter + "%");
+            query.setParameter("filter", filter.trim() + "%");
         }
     }
 }
